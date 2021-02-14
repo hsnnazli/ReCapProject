@@ -1,4 +1,6 @@
 ﻿using Business.Abstract;
+using Business.Constants;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.DTOs;
@@ -15,20 +17,31 @@ namespace Business.Concrete
         {
             _carDal = carDal;
         }
-
-        public List<Car> GetAll()
+        public IResult Add(Car car)
         {
-            return _carDal.GetAll();
+            if (car.Description.Length < 5)
+            {
+                return new ErrorResult(Messages.Invalid);
+            }
+            _carDal.Add(car);
+            return new SuccesResult(Messages.EntityAdded);
+
         }
 
-        public List<Car> GetById(int id)
+        public IDataResult<List<Car>> GetAll()
         {
-            return _carDal.GetAll(c => c.BrandId == id);
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(),Messages.EntitiyListed);
         }
 
-        public List<CarDetailsDTO> GetCarDetails()
+        public IDataResult<List<Car>> GetById(int id)
         {
-            return _carDal.GetCarDetails();
+            return new SuccessDataResult<List<Car>>(_carDal.GetAll(c => c.BrandId == id));
         }
+
+        public IDataResult<List<CarDetailsDTO>> GetCarDetails()
+        {
+            return new SuccessDataResult<List<CarDetailsDTO>>(_carDal.GetCarDetails());
+        }
+
     }
 }
