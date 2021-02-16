@@ -28,8 +28,18 @@ namespace Business.Concrete
 
         }
 
+        public IResult Delete(Car car)
+        {
+            _carDal.Delete(car);
+            return new SuccesResult(Messages.EntityDeleted);
+        }
+
         public IDataResult<List<Car>> GetAll()
         {
+            if (DateTime.Now.Hour==01)
+            {
+                return new ErrorDataResult<List<Car>>(Messages.MaintenanceTime);
+            }
             return new SuccessDataResult<List<Car>>(_carDal.GetAll(),Messages.EntitiyListed);
         }
 
@@ -43,5 +53,10 @@ namespace Business.Concrete
             return new SuccessDataResult<List<CarDetailsDTO>>(_carDal.GetCarDetails());
         }
 
+        public IResult Update(Car car)
+        {
+            _carDal.Update(car);
+            return new SuccesResult(Messages.EntityUpdated);
+        }
     }
 }
